@@ -5,6 +5,9 @@ import java.util.*;
 public class SubImgCharMatcher {
 
     private static final int CHAR_RESOLUTION_FACTOR = 16;
+    private static final int MAX_POSSIBLE_BRIGHTNESS = 1;
+    private static final int MIN_POSSIBLE_BRIGHTNESS = 0;
+    private static final int ILLEGAL_BRIGHTNESS = -1;
 
     private final HashMap<Double, HashSet<Character>> charBrightnessMap;
     private boolean initializationState;
@@ -12,8 +15,8 @@ public class SubImgCharMatcher {
     private double maxBrightness;
 
     public SubImgCharMatcher(char[] charset) {
-        this.minBrightness = 1;
-        this.maxBrightness = 0;
+        this.minBrightness = MAX_POSSIBLE_BRIGHTNESS;
+        this.maxBrightness = MIN_POSSIBLE_BRIGHTNESS;
         this.initializationState = true;
         this.charBrightnessMap = new HashMap<>();
         for(char character: charset) {
@@ -36,8 +39,8 @@ public class SubImgCharMatcher {
     }
 
     public char getCharByImageBrightness(double brightness) {
-        double minBrightnessDifference = 1.0;
-        double closestCharBrightness = -1.0;
+        double minBrightnessDifference = MAX_POSSIBLE_BRIGHTNESS;
+        double closestCharBrightness = ILLEGAL_BRIGHTNESS;
         for(double charBrightness: this.charBrightnessMap.keySet()) {
             if(Math.abs(charBrightness - brightness) < minBrightnessDifference) {
                 minBrightnessDifference = Math.abs(charBrightness - brightness);
@@ -93,12 +96,12 @@ public class SubImgCharMatcher {
                 if(this.charBrightnessMap.get(charBrightness).isEmpty()) {
                     this.charBrightnessMap.remove(charBrightness);
                     if(this.maxBrightness == charBrightness) {
-                        this.maxBrightness = 0;
+                        this.maxBrightness = MIN_POSSIBLE_BRIGHTNESS;
                         modifyAllCharsBrightness();
                         return;
                     }
                     if(this.minBrightness == charBrightness) {
-                        this.minBrightness = 1;
+                        this.minBrightness = MAX_POSSIBLE_BRIGHTNESS;
                         modifyAllCharsBrightness();
                         return;
                     }
