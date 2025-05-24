@@ -2,13 +2,13 @@ package image;
 
 import java.awt.*;
 
-public final class ImageEditor {
+public final class PadImageDimensions {
 
     private static final Color WHITE_COLOR_VALUES = new Color(255, 255, 255);
     private static final int SIDES_NUMBER = 2;
     private static final int PADDING_FACTOR = 2;
 
-    private ImageEditor() {}
+    private PadImageDimensions() {}
 
     public static Image padImageDimensions(Image image) {
         int newWidth = updateDimension(image.getWidth());
