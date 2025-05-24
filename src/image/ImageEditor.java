@@ -1,6 +1,7 @@
 package image;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public final class ImageEditor {
 
@@ -19,6 +20,29 @@ public final class ImageEditor {
         return new Image(newPixelsMatrix, newWidth, newHeight);
     }
 
+    //TODO check for the possibility of IndexOutOfBoundsException.
+    public static ArrayList<Image> getSubImages(Image image, int resolution) {
+        ArrayList<Image> subImages = new ArrayList<>();
+        int subImagesSize = image.getWidth() / resolution;
+        for (int rowIndex = 0; rowIndex < image.getHeight(); rowIndex += subImagesSize) {
+            for (int columnIndex = 0; columnIndex < image.getWidth(); columnIndex += subImagesSize) {
+                subImages.add(createSubImage(rowIndex, columnIndex, subImagesSize, image));
+            }
+        }
+        return subImages;
+    }
+
+    private static Image createSubImage(int row, int column, int size, Image image) {
+        Color[][] pixelsSubMatrix = new Color[size][size];
+        for (int rowIndex = row; rowIndex < row + size; rowIndex++) {
+            for (int columnIndex = column; columnIndex < column + size; columnIndex++) {
+                pixelsSubMatrix[rowIndex - row][columnIndex - column] = image.getPixel(rowIndex, columnIndex);
+            }
+        }
+        return new Image(pixelsSubMatrix, size, size);
+    }
+
+    //TODO check for the possibility of IndexOutOfBoundsException.
     private static void updateRows(Color[][] pixelsMatrix, Image originalImage) {
         int newPixelsNumberForEachSide = 0;
         if(pixelsMatrix[0].length != originalImage.getWidth()) {
@@ -38,6 +62,7 @@ public final class ImageEditor {
         }
     }
 
+    //TODO check for the possibility of IndexOutOfBoundsException.
     private static void updateColumns(Color[][] pixelsMatrix, Image originalImage) {
         int newPixelsNumberForEachSide = 0;
         if(pixelsMatrix.length != originalImage.getHeight()) {
