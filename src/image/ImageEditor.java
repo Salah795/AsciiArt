@@ -5,9 +5,13 @@ import java.util.ArrayList;
 
 public final class ImageEditor {
 
+    private static final int MAX_RGB_VALUE = 255;
     private static final Color WHITE_COLOR_VALUES = new Color(255, 255, 255);
     private static final int SIDES_NUMBER = 2;
     private static final int PADDING_FACTOR = 2;
+    private static final double GREY_SCALE_RED_FACTOR = 0.2126;
+    private static final double GREY_SCALE_GREEN_FACTOR = 0.7152;
+    private static final double GREY_SCALE_BLUE_FACTOR = 0.0722;
 
     private ImageEditor() {}
 
@@ -30,6 +34,19 @@ public final class ImageEditor {
             }
         }
         return subImages;
+    }
+
+    public static double calculateImageBrightness(Image image) {
+        double greyPixelSum = 0;
+        for (int rowIndex = 0; rowIndex < image.getHeight(); rowIndex++) {
+            for (int columnIndex = 0; columnIndex < image.getWidth(); columnIndex++) {
+                Color currentPixel = image.getPixel(rowIndex, columnIndex);
+                greyPixelSum += currentPixel.getRed() * GREY_SCALE_RED_FACTOR +
+                        currentPixel.getGreen() * GREY_SCALE_GREEN_FACTOR +
+                        currentPixel.getBlue() * GREY_SCALE_BLUE_FACTOR;
+            }
+        }
+        return greyPixelSum / (image.getWidth() * image.getHeight() * MAX_RGB_VALUE);
     }
 
     private static Image createSubImage(int row, int column, int size, Image image) {
