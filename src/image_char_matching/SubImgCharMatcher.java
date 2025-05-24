@@ -1,9 +1,16 @@
-package image;
+package image_char_matching;
+
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class SubImgCharMatcher {
 
+    private HashMap<Double, PriorityQueue<Integer>> charBrightnessMap;
+
     public SubImgCharMatcher(char[] charset) {
-        //TODO implement this method
+        for(char character: charset) {
+
+        }
     }
 
     public char getCharByImageBrightness(double brightness) {
