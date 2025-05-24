@@ -20,37 +20,38 @@ public final class PadImageDimensions {
     }
 
     private static void updateRows(Color[][] pixelsMatrix, Image originalImage) {
+        int newPixelsNumberForEachSide = 0;
         if(pixelsMatrix[0].length != originalImage.getWidth()) {
-            int newPixelsNumberForEachSide = (pixelsMatrix[0].length - originalImage.getWidth()) /
-                    SIDES_NUMBER;
-            for (int rowIndex = 0; rowIndex < pixelsMatrix.length; rowIndex++) {
-                for (int colIndex = 0; colIndex < pixelsMatrix[rowIndex].length; colIndex++) {
-                    if(colIndex < newPixelsNumberForEachSide) {
-                        pixelsMatrix[rowIndex][colIndex] = WHITE_COLOR_VALUES;
-                    } else if (colIndex < newPixelsNumberForEachSide + originalImage.getWidth()) {
-                        pixelsMatrix[rowIndex][colIndex] = originalImage.getPixel(rowIndex,
-                                colIndex - newPixelsNumberForEachSide);
-                    } else {
-                        pixelsMatrix[rowIndex][colIndex] = WHITE_COLOR_VALUES;
-                    }
+            newPixelsNumberForEachSide = (pixelsMatrix[0].length - originalImage.getWidth()) / SIDES_NUMBER;
+        }
+        for (int rowIndex = 0; rowIndex < pixelsMatrix.length; rowIndex++) {
+            for (int colIndex = 0; colIndex < pixelsMatrix[rowIndex].length; colIndex++) {
+                if(colIndex < newPixelsNumberForEachSide) {
+                    pixelsMatrix[rowIndex][colIndex] = WHITE_COLOR_VALUES;
+                } else if (colIndex < newPixelsNumberForEachSide + originalImage.getWidth()) {
+                    pixelsMatrix[rowIndex][colIndex] = originalImage.getPixel(rowIndex,
+                            colIndex - newPixelsNumberForEachSide);
+                } else {
+                    pixelsMatrix[rowIndex][colIndex] = WHITE_COLOR_VALUES;
                 }
             }
         }
     }
 
     private static void updateColumns(Color[][] pixelsMatrix, Image originalImage) {
+        int newPixelsNumberForEachSide = 0;
         if(pixelsMatrix.length != originalImage.getHeight()) {
-            int newPixelsNumberForEachSide = (pixelsMatrix.length - originalImage.getHeight()) / SIDES_NUMBER;
-            for (int columnIndex = 0; columnIndex < pixelsMatrix[0].length; columnIndex++) {
-                for (int rowIndex = 0; rowIndex < pixelsMatrix.length; rowIndex++) {
-                    if(rowIndex < newPixelsNumberForEachSide) {
-                        pixelsMatrix[rowIndex][columnIndex] = WHITE_COLOR_VALUES;
-                    } else if (rowIndex < newPixelsNumberForEachSide + originalImage.getHeight()) {
-                        pixelsMatrix[rowIndex][columnIndex] = originalImage.getPixel(rowIndex -
-                                newPixelsNumberForEachSide, columnIndex);
-                    } else {
-                        pixelsMatrix[rowIndex][columnIndex] = WHITE_COLOR_VALUES;
-                    }
+            newPixelsNumberForEachSide = (pixelsMatrix.length - originalImage.getHeight()) / SIDES_NUMBER;
+        }
+        for (int columnIndex = 0; columnIndex < pixelsMatrix[0].length; columnIndex++) {
+            for (int rowIndex = 0; rowIndex < pixelsMatrix.length; rowIndex++) {
+                if(rowIndex < newPixelsNumberForEachSide) {
+                    pixelsMatrix[rowIndex][columnIndex] = WHITE_COLOR_VALUES;
+                } else if (rowIndex < newPixelsNumberForEachSide + originalImage.getHeight()) {
+                    pixelsMatrix[rowIndex][columnIndex] = originalImage.getPixel(rowIndex -
+                            newPixelsNumberForEachSide, columnIndex);
+                } else {
+                    pixelsMatrix[rowIndex][columnIndex] = WHITE_COLOR_VALUES;
                 }
             }
         }
