@@ -26,18 +26,6 @@ public class SubImgCharMatcher {
         this.initializationState = false;
     }
 
-    private void modifyAllCharsBrightness() {
-        for(double charBrightness: this.charBrightnessMap.keySet()) {
-            modifyCharBrightness(charBrightness);
-        }
-    }
-
-    private void modifyCharBrightness(double charBrightness) {
-    HashSet<Character> charsSet = this.charBrightnessMap.remove(charBrightness);
-    double newCharBrightness = (charBrightness - minBrightness) / (maxBrightness - minBrightness);
-    this.charBrightnessMap.put(newCharBrightness, charsSet);
-    }
-
     public char getCharByImageBrightness(double brightness) {
         double minBrightnessDifference = MAX_POSSIBLE_BRIGHTNESS;
         double closestCharBrightness = ILLEGAL_BRIGHTNESS;
@@ -71,24 +59,6 @@ public class SubImgCharMatcher {
         checkForModify(charBrightness);
     }
 
-    private void checkForModify(double charBrightness) {
-        if(charBrightness < this.minBrightness) {
-            this.minBrightness = charBrightness;
-            if(!this.initializationState) {
-                modifyAllCharsBrightness();
-            }
-            return;
-        }
-        if(charBrightness > this.maxBrightness) {
-            this.maxBrightness = charBrightness;
-            if(!this.initializationState) {
-                modifyAllCharsBrightness();
-            }
-        } else if (!initializationState) {
-            modifyCharBrightness(charBrightness);
-        }
-    }
-
     public void removeChar(char c) {
         for(double charBrightness: this.charBrightnessMap.keySet()) {
             if(this.charBrightnessMap.get(charBrightness).contains(c)) {
@@ -107,6 +77,36 @@ public class SubImgCharMatcher {
                     }
                 }
             }
+        }
+    }
+
+    private void modifyAllCharsBrightness() {
+        for(double charBrightness: this.charBrightnessMap.keySet()) {
+            modifyCharBrightness(charBrightness);
+        }
+    }
+
+    private void modifyCharBrightness(double charBrightness) {
+    HashSet<Character> charsSet = this.charBrightnessMap.remove(charBrightness);
+    double newCharBrightness = (charBrightness - minBrightness) / (maxBrightness - minBrightness);
+    this.charBrightnessMap.put(newCharBrightness, charsSet);
+    }
+
+    private void checkForModify(double charBrightness) {
+        if(charBrightness < this.minBrightness) {
+            this.minBrightness = charBrightness;
+            if(!this.initializationState) {
+                modifyAllCharsBrightness();
+            }
+            return;
+        }
+        if(charBrightness > this.maxBrightness) {
+            this.maxBrightness = charBrightness;
+            if(!this.initializationState) {
+                modifyAllCharsBrightness();
+            }
+        } else if (!initializationState) {
+            modifyCharBrightness(charBrightness);
         }
     }
 }

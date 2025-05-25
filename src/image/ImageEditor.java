@@ -25,12 +25,15 @@ public final class ImageEditor {
     }
 
     //TODO check for the possibility of IndexOutOfBoundsException.
-    public static ArrayList<Image> getSubImages(Image image, int resolution) {
-        ArrayList<Image> subImages = new ArrayList<>();
+    //TODO check the definition of subImages variable if it's right the it's usage.
+    public static Image[][] getSubImages(Image image, int resolution) {
         int subImagesSize = image.getWidth() / resolution;
+        int rowsNumber = image.getHeight() / subImagesSize;
+        Image[][] subImages = new Image[rowsNumber][resolution];
         for (int rowIndex = 0; rowIndex < image.getHeight(); rowIndex += subImagesSize) {
             for (int columnIndex = 0; columnIndex < image.getWidth(); columnIndex += subImagesSize) {
-                subImages.add(createSubImage(rowIndex, columnIndex, subImagesSize, image));
+                subImages[rowIndex][columnIndex] = createSubImage(rowIndex, columnIndex,
+                        subImagesSize, image);
             }
         }
         return subImages;
