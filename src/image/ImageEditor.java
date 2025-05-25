@@ -15,25 +15,26 @@ public final class ImageEditor {
 
     private ImageEditor() {}
 
+    //TODO make this method more efficient.
     public static Image padImageDimensions(Image image) {
         int newWidth = updateDimension(image.getWidth());
-        int newHeight = updateDimension(image.getHeight());
-        Color[][] newPixelsMatrix = new Color[newHeight][newWidth];
+        Color[][] newPixelsMatrix = new Color[image.getHeight()][newWidth];
         updateRows(newPixelsMatrix, image);
-        updateColumns(newPixelsMatrix, image);
+        Image newImage = new Image(newPixelsMatrix, newWidth, image.getHeight());
+        int newHeight = updateDimension(image.getHeight());
+        newPixelsMatrix = new Color[newHeight][newWidth];
+        updateColumns(newPixelsMatrix, newImage);
         return new Image(newPixelsMatrix, newWidth, newHeight);
     }
 
-    //TODO check for the possibility of IndexOutOfBoundsException.
-    //TODO check the definition of subImages variable if it's right the it's usage.
     public static Image[][] getSubImages(Image image, int resolution) {
         int subImagesSize = image.getWidth() / resolution;
         int rowsNumber = image.getHeight() / subImagesSize;
         Image[][] subImages = new Image[rowsNumber][resolution];
         for (int rowIndex = 0; rowIndex < image.getHeight(); rowIndex += subImagesSize) {
             for (int columnIndex = 0; columnIndex < image.getWidth(); columnIndex += subImagesSize) {
-                subImages[rowIndex][columnIndex] = createSubImage(rowIndex, columnIndex,
-                        subImagesSize, image);
+                subImages[rowIndex / subImagesSize][columnIndex / subImagesSize] = createSubImage(
+                        rowIndex, columnIndex, subImagesSize, image);
             }
         }
         return subImages;
@@ -62,13 +63,12 @@ public final class ImageEditor {
         return new Image(pixelsSubMatrix, size, size);
     }
 
-    //TODO check for the possibility of IndexOutOfBoundsException.
     private static void updateRows(Color[][] pixelsMatrix, Image originalImage) {
         int newPixelsNumberForEachSide = 0;
         if(pixelsMatrix[0].length != originalImage.getWidth()) {
             newPixelsNumberForEachSide = (pixelsMatrix[0].length - originalImage.getWidth()) / SIDES_NUMBER;
         }
-        for (int rowIndex = 0; rowIndex < pixelsMatrix.length; rowIndex++) {
+        for (int rowIndex = 0; rowIndex < originalImage.getHeight(); rowIndex++) {
             for (int colIndex = 0; colIndex < pixelsMatrix[rowIndex].length; colIndex++) {
                 if(colIndex < newPixelsNumberForEachSide) {
                     pixelsMatrix[rowIndex][colIndex] = WHITE_COLOR_VALUES;
@@ -82,7 +82,6 @@ public final class ImageEditor {
         }
     }
 
-    //TODO check for the possibility of IndexOutOfBoundsException.
     private static void updateColumns(Color[][] pixelsMatrix, Image originalImage) {
         int newPixelsNumberForEachSide = 0;
         if(pixelsMatrix.length != originalImage.getHeight()) {

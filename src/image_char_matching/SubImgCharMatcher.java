@@ -81,7 +81,8 @@ public class SubImgCharMatcher {
     }
 
     private void modifyAllCharsBrightness() {
-        for(double charBrightness: this.charBrightnessMap.keySet()) {
+        Set<Double> originalBrightnessSet = new HashSet<>(this.charBrightnessMap.keySet());
+        for(double charBrightness: originalBrightnessSet) {
             modifyCharBrightness(charBrightness);
         }
     }
