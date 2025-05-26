@@ -34,8 +34,8 @@ public class Shell {
 
     public Shell(String originalImageFileName) {
         try {
-            Image originalImage = new Image(originalImageFileName);
             this.charMatcher = new SubImgCharMatcher(DEFAULT_CHARSET);
+            Image originalImage = new Image(originalImageFileName);
         } catch (IOException _) {}
     }
 
