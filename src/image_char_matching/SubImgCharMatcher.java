@@ -59,7 +59,6 @@ public class SubImgCharMatcher {
         checkForModify(charBrightness);
     }
 
-    //TODO check again.
     public void removeChar(char c) {
         Set<Double> originalBrightnessSet = new HashSet<>(this.charBrightnessMap.keySet());
         for(double charBrightness: originalBrightnessSet) {
