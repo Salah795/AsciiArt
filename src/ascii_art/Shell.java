@@ -14,6 +14,7 @@ public class Shell {
     private static final String CHARSET_PRINTING_FORMAT = "%c ";
     private static final String EXIT_COMMAND = "exit";
     private static final String ADD_COMMAND = "add";
+    private static final String REMOVE_COMMAND = "remove";
     private static final int MIN_LEGAL_CHAR = 32;
     private static final int MAX_LEGAL_CHAR = 126;
     private static final int ADD_WITH_COMMAND_LENGTH = 3;
@@ -27,6 +28,8 @@ public class Shell {
     private static final int ADD_ONE_CHAR_COMMAND_LENGTH = 1;
     private static final int ADD_ONE_CHAR_COMMAND_INDEX = 0;
     private static final int IMAGE_NAME_INDEX = 0;
+    private static final String ADD_COMMAND_EXCEPTION_MESSAGE = "Did not add due to incorrect format";
+    private static final String REMOVE_COMMAND_EXCEPTION_MESSAGE = "Did not remove due to incorrect format";
     private static final char[] DEFAULT_CHARSET = new char[] {'0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9'};
 
@@ -63,39 +66,54 @@ public class Shell {
                 break;
             case ADD_COMMAND:
                 try {
-                    addCommand(userArguments[1]);
+                    addRemoveCommand(userArguments[1], true);
                 } catch (IllegalAddCommandException exception) {
                     System.out.println(exception.getMessage());
                 }
                 break;
+            case REMOVE_COMMAND:
+                try {
+                    addRemoveCommand(userArguments[1], false);
+                } catch (IllegalAddCommandException exception) {
+                    System.out.println(exception.getMessage());
+                }
+
         }
     }
 
-    private void addCommand(String argument) throws IllegalAddCommandException {
+    private void addRemoveCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
         if (argument.equals(ADD_ALL_COMMAND)) {
-            addAllCommand();
+            addAllCommand(addCommand);
         } else if (argument.equals(ADD_SPACE_COMMAND)) {
-            addSpaceCommand();
+            addSpaceCommand(addCommand);
         } else if (argument.length() == ADD_WITH_COMMAND_LENGTH &&
                 argument.charAt(RANGE_INDEX) == RANGE_CHAR) {
-            addWithRangeCommand(argument);
+            addWithRangeCommand(argument, addCommand);
         } else if (argument.length()  == ADD_ONE_CHAR_COMMAND_LENGTH) {
-            addOneCharCommand(argument);
+            addOneCharCommand(argument, addCommand);
         } else {
-            throw new IllegalAddCommandException();
+            String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
+                    REMOVE_COMMAND_EXCEPTION_MESSAGE;
+            throw new IllegalAddCommandException(exception_message);
         }
     }
 
-    private void addOneCharCommand(String argument) throws IllegalAddCommandException {
+    private void addOneCharCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
         char charToAdd = argument.charAt(ADD_ONE_CHAR_COMMAND_INDEX);
         if (charToAdd < MIN_LEGAL_CHAR || charToAdd > MAX_LEGAL_CHAR) {
-            throw new IllegalAddCommandException();
+            String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
+                    REMOVE_COMMAND_EXCEPTION_MESSAGE;
+            throw new IllegalAddCommandException(exception_message);
         } else {
-            this.charMatcher.addChar(charToAdd);
+            if(addCommand) {
+                this.charMatcher.addChar(charToAdd);
+            } else {
+                this.charMatcher.removeChar(charToAdd);
+            }
         }
     }
 
-    private void addWithRangeCommand(String argument) throws IllegalAddCommandException {
+    private void addWithRangeCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
         int firstChar = argument.charAt(RANGE_FIRST_CHAR_INDEX);
         int lastChar = argument.charAt(RANGE_LAST_CHAR_INDEX);
         if(argument.charAt(RANGE_FIRST_CHAR_INDEX) > argument.charAt(RANGE_LAST_CHAR_INDEX)) {
@@ -103,20 +121,34 @@ public class Shell {
             lastChar = argument.charAt(RANGE_FIRST_CHAR_INDEX);
         }
         if (firstChar < MIN_LEGAL_CHAR || lastChar > MAX_LEGAL_CHAR) {
-            throw new IllegalAddCommandException();
+            String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
+                    REMOVE_COMMAND_EXCEPTION_MESSAGE;
+            throw new IllegalAddCommandException(exception_message);
         }
         for (int charValue = firstChar; charValue <= lastChar; charValue++) {
-            this.charMatcher.addChar((char) charValue);
+            if(addCommand) {
+                this.charMatcher.addChar((char) charValue);
+            } else {
+                this.charMatcher.removeChar((char) charValue);
+            }
         }
     }
 
-    private void addSpaceCommand() {
-        this.charMatcher.addChar(SPACE);
+    private void addSpaceCommand(boolean addCommand) {
+        if (addCommand) {
+            this.charMatcher.addChar(SPACE);
+        } else {
+            this.charMatcher.removeChar(SPACE);
+        }
     }
 
-    private void addAllCommand() {
+    private void addAllCommand(boolean addCommand) {
         for (int charValue = MIN_LEGAL_CHAR; charValue <= MAX_LEGAL_CHAR; charValue++) {
-            this.charMatcher.addChar((char)charValue);
+            if(addCommand) {
+                this.charMatcher.addChar((char)charValue);
+            } else {
+                this.charMatcher.removeChar((char)charValue);
+            }
         }
     }
 
