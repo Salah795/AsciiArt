@@ -4,7 +4,6 @@ import image.Image;
 import image_char_matching.SubImgCharMatcher;
 
 import java.io.IOException;
-import java.util.PrimitiveIterator;
 
 public class Shell {
 
@@ -44,7 +43,7 @@ public class Shell {
 
     public void run(String imageName) {
         while (true) {
-            System.out.println(RUN_PROMPT);
+            System.out.print(RUN_PROMPT);
             String userInput = KeyboardInput.readLine();
             if (userInput.equals(EXIT_COMMAND)) {
                 break;
@@ -66,14 +65,14 @@ public class Shell {
                 break;
             case ADD_COMMAND:
                 try {
-                    addRemoveCommand(userArguments[1], true);
+                    addRemoveCommand(userArguments, true);
                 } catch (IllegalAddCommandException exception) {
                     System.out.println(exception.getMessage());
                 }
                 break;
             case REMOVE_COMMAND:
                 try {
-                    addRemoveCommand(userArguments[1], false);
+                    addRemoveCommand(userArguments, false);
                 } catch (IllegalAddCommandException exception) {
                     System.out.println(exception.getMessage());
                 }
@@ -81,16 +80,16 @@ public class Shell {
         }
     }
 
-    private void addRemoveCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
-        if (argument.equals(ADD_ALL_COMMAND)) {
-            addAllCommand(addCommand);
-        } else if (argument.equals(ADD_SPACE_COMMAND)) {
-            addSpaceCommand(addCommand);
-        } else if (argument.length() == ADD_WITH_COMMAND_LENGTH &&
-                argument.charAt(RANGE_INDEX) == RANGE_CHAR) {
-            addWithRangeCommand(argument, addCommand);
-        } else if (argument.length()  == ADD_ONE_CHAR_COMMAND_LENGTH) {
-            addOneCharCommand(argument, addCommand);
+    private void addRemoveCommand(String[] userArguments, boolean addCommand) throws IllegalAddCommandException {
+        if (userArguments.length >= 2 && userArguments[1].equals(ADD_ALL_COMMAND)) {
+            addRemoveAllCommand(addCommand);
+        } else if (userArguments.length >= 2 && userArguments[1].equals(ADD_SPACE_COMMAND)) {
+            addRemoveSpaceCommand(addCommand);
+        } else if (userArguments.length >= 2 && userArguments[1].length() == ADD_WITH_COMMAND_LENGTH &&
+                userArguments[1].charAt(RANGE_INDEX) == RANGE_CHAR) {
+            addRemoveWithRangeCommand(userArguments[1], addCommand);
+        } else if (userArguments.length >= 2 && userArguments[1].length()  == ADD_ONE_CHAR_COMMAND_LENGTH) {
+            addRemoveOneCharCommand(userArguments[1], addCommand);
         } else {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
                     REMOVE_COMMAND_EXCEPTION_MESSAGE;
@@ -98,7 +97,7 @@ public class Shell {
         }
     }
 
-    private void addOneCharCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
+    private void addRemoveOneCharCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
         char charToAdd = argument.charAt(ADD_ONE_CHAR_COMMAND_INDEX);
         if (charToAdd < MIN_LEGAL_CHAR || charToAdd > MAX_LEGAL_CHAR) {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
@@ -113,7 +112,7 @@ public class Shell {
         }
     }
 
-    private void addWithRangeCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
+    private void addRemoveWithRangeCommand(String argument, boolean addCommand) throws IllegalAddCommandException {
         int firstChar = argument.charAt(RANGE_FIRST_CHAR_INDEX);
         int lastChar = argument.charAt(RANGE_LAST_CHAR_INDEX);
         if(argument.charAt(RANGE_FIRST_CHAR_INDEX) > argument.charAt(RANGE_LAST_CHAR_INDEX)) {
@@ -134,7 +133,7 @@ public class Shell {
         }
     }
 
-    private void addSpaceCommand(boolean addCommand) {
+    private void addRemoveSpaceCommand(boolean addCommand) {
         if (addCommand) {
             this.charMatcher.addChar(SPACE);
         } else {
@@ -142,7 +141,7 @@ public class Shell {
         }
     }
 
-    private void addAllCommand(boolean addCommand) {
+    private void addRemoveAllCommand(boolean addCommand) {
         for (int charValue = MIN_LEGAL_CHAR; charValue <= MAX_LEGAL_CHAR; charValue++) {
             if(addCommand) {
                 this.charMatcher.addChar((char)charValue);
@@ -154,7 +153,8 @@ public class Shell {
 
     private void charsCommand() {
         for (char character: this.charMatcher.getSortedCharset()) {
-            System.out.println(String.format(CHARSET_PRINTING_FORMAT, character));
+            System.out.print(String.format(CHARSET_PRINTING_FORMAT, character));
         }
+        System.out.println();
     }
 }
