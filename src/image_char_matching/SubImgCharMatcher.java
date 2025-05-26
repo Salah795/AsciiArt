@@ -80,6 +80,15 @@ public class SubImgCharMatcher {
         }
     }
 
+    public List<Character> getSortedCharset() {
+        ArrayList<Character> charset = new ArrayList<>();
+        for(double charBrightness: this.charBrightnessMap.keySet()) {
+            charset.addAll(this.charBrightnessMap.get(charBrightness));
+        }
+        charset.sort(null);
+        return charset;
+    }
+
     private void modifyAllCharsBrightness() {
         Set<Double> originalBrightnessSet = new HashSet<>(this.charBrightnessMap.keySet());
         for(double charBrightness: originalBrightnessSet) {
