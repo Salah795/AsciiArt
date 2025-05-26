@@ -1,7 +1,6 @@
 package image;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public final class ImageEditor {
 
@@ -15,16 +14,14 @@ public final class ImageEditor {
 
     private ImageEditor() {}
 
-    //TODO make this method more efficient.
     public static Image padImageDimensions(Image image) {
         int newWidth = updateDimension(image.getWidth());
         Color[][] newPixelsMatrix = new Color[image.getHeight()][newWidth];
-        updateRows(newPixelsMatrix, image);
-        Image newImage = new Image(newPixelsMatrix, newWidth, image.getHeight());
+        image = updateRows(newPixelsMatrix, image);
         int newHeight = updateDimension(image.getHeight());
         newPixelsMatrix = new Color[newHeight][newWidth];
-        updateColumns(newPixelsMatrix, newImage);
-        return new Image(newPixelsMatrix, newWidth, newHeight);
+        image = updateColumns(newPixelsMatrix, image);
+        return image;
     }
 
     public static Image[][] getSubImages(Image image, int resolution) {
@@ -63,10 +60,10 @@ public final class ImageEditor {
         return new Image(pixelsSubMatrix, size, size);
     }
 
-    private static void updateRows(Color[][] pixelsMatrix, Image originalImage) {
-        int newPixelsNumberForEachSide = 0;
-        if(pixelsMatrix[0].length != originalImage.getWidth()) {
-            newPixelsNumberForEachSide = (pixelsMatrix[0].length - originalImage.getWidth()) / SIDES_NUMBER;
+    private static Image updateRows(Color[][] pixelsMatrix, Image originalImage) {
+        int newPixelsNumberForEachSide = (pixelsMatrix[0].length - originalImage.getWidth()) / SIDES_NUMBER;
+        if(pixelsMatrix[0].length == originalImage.getWidth()) {
+            return originalImage;
         }
         for (int rowIndex = 0; rowIndex < originalImage.getHeight(); rowIndex++) {
             for (int colIndex = 0; colIndex < pixelsMatrix[rowIndex].length; colIndex++) {
@@ -80,12 +77,13 @@ public final class ImageEditor {
                 }
             }
         }
+        return new Image(pixelsMatrix, pixelsMatrix[0].length, originalImage.getHeight());
     }
 
-    private static void updateColumns(Color[][] pixelsMatrix, Image originalImage) {
-        int newPixelsNumberForEachSide = 0;
-        if(pixelsMatrix.length != originalImage.getHeight()) {
-            newPixelsNumberForEachSide = (pixelsMatrix.length - originalImage.getHeight()) / SIDES_NUMBER;
+    private static Image updateColumns(Color[][] pixelsMatrix, Image originalImage) {
+        int newPixelsNumberForEachSide = (pixelsMatrix.length - originalImage.getHeight()) / SIDES_NUMBER;
+        if(pixelsMatrix.length == originalImage.getHeight()) {
+            return originalImage;
         }
         for (int columnIndex = 0; columnIndex < pixelsMatrix[0].length; columnIndex++) {
             for (int rowIndex = 0; rowIndex < pixelsMatrix.length; rowIndex++) {
@@ -99,6 +97,7 @@ public final class ImageEditor {
                 }
             }
         }
+        return new Image(pixelsMatrix, pixelsMatrix[0].length, pixelsMatrix.length);
     }
 
     private static int updateDimension(int dimension) {
