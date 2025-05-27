@@ -1,5 +1,8 @@
 package ascii_art;
 
+import ascii_output.AsciiOutput;
+import ascii_output.ConsoleAsciiOutput;
+import ascii_output.HtmlAsciiOutput;
 import image.Image;
 import image.ImageEditor;
 import image_char_matching.SubImgCharMatcher;
@@ -41,14 +44,15 @@ public class Shell {
     private static final String REMOVE_COMMAND_EXCEPTION_MESSAGE = "Did not remove due to incorrect format.";
     private static final String RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE = "Did not change " +
             "resolution due to exceeding boundaries.";
-    private static final String RESOLUTION_INCORRECT_FORMAT_EXCEPTION = "Did not change resolution " +
+    private static final String RESOLUTION_INCORRECT_FORMAT_EXCEPTION_MESSAGE = "Did not change resolution " +
             "due to incorrect format.";
-    private static final String INCORRECT_COMMAND_FORMAT_EXCEPTION = "Did not execute " +
+    private static final String INCORRECT_COMMAND_FORMAT_EXCEPTION_MESSAGE = "Did not execute " +
             "due to incorrect command.";
-    private static final String ROUND_INCORRECT_FORMAT_EXCEPTION = "Did not change rounding method " +
+    private static final String ROUND_INCORRECT_FORMAT_EXCEPTION_MESSAGE = "Did not change rounding method " +
             "due to incorrect format.";
-    private static final String OUTPUT_INCORRECT_FORMAT_EXCEPTION = "Did not change output method " +
+    private static final String OUTPUT_INCORRECT_FORMAT_EXCEPTION_MESSAGE = "Did not change output method " +
             "due to incorrect format.";
+    private static final String CHARSET_EXCEPTION_MESSAGE = "Did not execute. Charset is too small.";
     private static final String RESOLUTION_DOUBLING_COMMAND = "up";
     private static final String RESOLUTION_DOWN_COMMAND = "down";
     private static final char[] DEFAULT_CHARSET = new char[] {'0', '1', '2', '3', '4', '5', '6', '7',
@@ -59,6 +63,8 @@ public class Shell {
     private static final String ROUND_ABS = "abs";
     private static final String ROUND_UP = "up";
     private static final String ROUND_DOWN = "down";
+    private static final String HTML_FILENAME = "out.html";
+    private static final String FONT_NAME = "Courier New";
 
     private final SubImgCharMatcher charMatcher;
     private final Image paddedImage;
@@ -120,16 +126,34 @@ public class Shell {
                     roundCommand(userArguments);
                     break;
                 case OUTPUT_COMMAND:
+                    //TODO check the html command.
                     outputCommand(userArguments);
                     break;
                 case ASCII_ART_COMMAND:
-                    //TODO implement the this case.
+                    asciiArtCommand();
                     break;
                 default:
-                    throw new Exception(INCORRECT_COMMAND_FORMAT_EXCEPTION);
+                    throw new Exception(INCORRECT_COMMAND_FORMAT_EXCEPTION_MESSAGE);
             }
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
+        }
+    }
+
+    private void asciiArtCommand() throws Exception {
+        AsciiOutput asciiOutput;
+        if(this.charMatcher.getSortedCharset().size() < 2) {
+            throw new  Exception(CHARSET_EXCEPTION_MESSAGE);
+        }
+        AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(this.charMatcher.getSortedCharset(),
+                this.paddedImage, this.resolution);
+        char[][] asciiMatrix = asciiArtAlgorithm.run();
+        if(this.outputType.equals(CONSOLE_COMMAND)) {
+            asciiOutput = new ConsoleAsciiOutput();
+            asciiOutput.out(asciiMatrix);
+        } else {
+            asciiOutput = new HtmlAsciiOutput(HTML_FILENAME, FONT_NAME);
+            asciiOutput.out(asciiMatrix);
         }
     }
 
@@ -141,7 +165,7 @@ public class Shell {
         userArguments[COMMAND_SUB_TYPE_INDEX].equals(CONSOLE_COMMAND)) {
             this.outputType = CONSOLE_COMMAND;
         } else {
-            throw new Exception(OUTPUT_INCORRECT_FORMAT_EXCEPTION);
+            throw new Exception(OUTPUT_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
         }
     }
 
@@ -156,7 +180,7 @@ public class Shell {
                 userArguments[COMMAND_SUB_TYPE_INDEX].equals(ROUND_ABS)) {
             this.roundType = ROUND_ABS;
         } else {
-            throw new Exception(ROUND_INCORRECT_FORMAT_EXCEPTION);
+            throw new Exception(ROUND_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
         }
     }
 
@@ -177,7 +201,7 @@ public class Shell {
             this.resolution /= RESOLUTION_CHANGING_FACTOR;
             this.subImages = ImageEditor.getSubImages(this.paddedImage, this.resolution);
         } else if (userArguments.length >= COMMAND_WITH_TYPES_LENGTH) {
-            throw new Exception(RESOLUTION_INCORRECT_FORMAT_EXCEPTION);
+            throw new Exception(RESOLUTION_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
         }
     }
 

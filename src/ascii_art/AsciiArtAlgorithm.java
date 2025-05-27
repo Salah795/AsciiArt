@@ -4,6 +4,8 @@ import image.Image;
 import image.ImageEditor;
 import image_char_matching.SubImgCharMatcher;
 
+import java.util.List;
+
 public class AsciiArtAlgorithm {
 
     private static Image previousPadImage;
@@ -13,9 +15,13 @@ public class AsciiArtAlgorithm {
     private final Image padImage;
     private final int resolution;
 
-    public AsciiArtAlgorithm(char[] charset, Image image, int resolution) {
+    public AsciiArtAlgorithm(List<Character> charset, Image image, int resolution) {
         this.resolution = resolution;
-        this.charMatcher = new SubImgCharMatcher(charset);
+        char[] charsetArray = new char[charset.size()];
+        for (int index = 0; index < charsetArray.length; index++) {
+            charsetArray[index] = charset.get(index).charValue();
+        }
+        this.charMatcher = new SubImgCharMatcher(charsetArray);
         this.padImage = ImageEditor.padImageDimensions(image);
     }
 
