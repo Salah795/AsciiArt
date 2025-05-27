@@ -132,17 +132,17 @@ public class Shell {
                     asciiArtCommand();
                     break;
                 default:
-                    throw new Exception(INCORRECT_COMMAND_FORMAT_EXCEPTION_MESSAGE);
+                    throw new IOException(INCORRECT_COMMAND_FORMAT_EXCEPTION_MESSAGE);
             }
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    private void asciiArtCommand() throws Exception {
+    private void asciiArtCommand() throws IOException {
         AsciiOutput asciiOutput;
         if(this.charMatcher.getSortedCharset().size() < 2) {
-            throw new  Exception(CHARSET_EXCEPTION_MESSAGE);
+            throw new IOException(CHARSET_EXCEPTION_MESSAGE);
         }
         AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(this.charMatcher.getSortedCharset(),
                 this.paddedImage, this.resolution);
@@ -156,7 +156,7 @@ public class Shell {
         }
     }
 
-    private void outputCommand(String[] userArguments) throws Exception {
+    private void outputCommand(String[] userArguments) throws IOException {
         if(userArguments.length >= COMMAND_WITH_TYPES_LENGTH &&
         userArguments[COMMAND_SUB_TYPE_INDEX].equals(HTML_COMMAND)) {
             this.outputType = HTML_COMMAND;
@@ -164,11 +164,11 @@ public class Shell {
         userArguments[COMMAND_SUB_TYPE_INDEX].equals(CONSOLE_COMMAND)) {
             this.outputType = CONSOLE_COMMAND;
         } else {
-            throw new Exception(OUTPUT_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
+            throw new IOException(OUTPUT_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
         }
     }
 
-    private void roundCommand(String[] userArguments) throws Exception {
+    private void roundCommand(String[] userArguments) throws IOException {
         if(userArguments.length >= COMMAND_WITH_TYPES_LENGTH &&
                 userArguments[COMMAND_SUB_TYPE_INDEX].equals(ROUND_UP)) {
             this.roundType = ROUND_UP;
@@ -179,15 +179,15 @@ public class Shell {
                 userArguments[COMMAND_SUB_TYPE_INDEX].equals(ROUND_ABS)) {
             this.roundType = ROUND_ABS;
         } else {
-            throw new Exception(ROUND_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
+            throw new IOException(ROUND_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
         }
     }
 
-    private void resolutionCommand(String[] userArguments) throws Exception {
+    private void resolutionCommand(String[] userArguments) throws IOException {
         if(userArguments.length >= COMMAND_WITH_TYPES_LENGTH &&
                 userArguments[COMMAND_SUB_TYPE_INDEX].equals(RESOLUTION_DOUBLING_COMMAND)) {
             if(this.resolution * RESOLUTION_CHANGING_FACTOR > this.paddedImage.getWidth()) {
-                throw new Exception(RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE);
+                throw new IOException(RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE);
             }
             this.resolution *= RESOLUTION_CHANGING_FACTOR;
             this.subImages = ImageEditor.getSubImages(this.paddedImage, this.resolution);
@@ -195,17 +195,17 @@ public class Shell {
                 userArguments[COMMAND_SUB_TYPE_INDEX].equals(RESOLUTION_DOWN_COMMAND)) {
             double minCharsInRow = Math.max(1, this.paddedImage.getWidth() / this.paddedImage.getHeight());
             if((double) this.resolution / RESOLUTION_CHANGING_FACTOR < minCharsInRow) {
-                throw new Exception(RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE);
+                throw new IOException(RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE);
             }
             this.resolution /= RESOLUTION_CHANGING_FACTOR;
             this.subImages = ImageEditor.getSubImages(this.paddedImage, this.resolution);
         } else if (userArguments.length >= COMMAND_WITH_TYPES_LENGTH) {
-            throw new Exception(RESOLUTION_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
+            throw new IOException(RESOLUTION_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
         }
     }
 
     private void addRemoveCommand(String[] userArguments, boolean addCommand) throws
-            Exception {
+            IOException {
         if (userArguments.length >= COMMAND_WITH_TYPES_LENGTH &&
                 userArguments[COMMAND_SUB_TYPE_INDEX].equals(ADD_ALL_COMMAND)) {
             addRemoveAllCommand(addCommand);
@@ -222,17 +222,17 @@ public class Shell {
         } else {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
                     REMOVE_COMMAND_EXCEPTION_MESSAGE;
-            throw new Exception(exception_message);
+            throw new IOException(exception_message);
         }
     }
 
     private void addRemoveOneCharCommand(String argument, boolean addCommand) throws
-            Exception {
+            IOException {
         char charToAdd = argument.charAt(ADD_ONE_CHAR_COMMAND_INDEX);
         if (charToAdd < MIN_LEGAL_CHAR || charToAdd > MAX_LEGAL_CHAR) {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
                     REMOVE_COMMAND_EXCEPTION_MESSAGE;
-            throw new Exception(exception_message);
+            throw new IOException(exception_message);
         } else {
             if(addCommand) {
                 this.charMatcher.addChar(charToAdd);
@@ -243,7 +243,7 @@ public class Shell {
     }
 
     private void addRemoveWithRangeCommand(String argument, boolean addCommand) throws
-            Exception {
+            IOException {
         int firstChar = argument.charAt(RANGE_FIRST_CHAR_INDEX);
         int lastChar = argument.charAt(RANGE_LAST_CHAR_INDEX);
         if(argument.charAt(RANGE_FIRST_CHAR_INDEX) > argument.charAt(RANGE_LAST_CHAR_INDEX)) {
@@ -253,7 +253,7 @@ public class Shell {
         if (firstChar < MIN_LEGAL_CHAR || lastChar > MAX_LEGAL_CHAR) {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
                     REMOVE_COMMAND_EXCEPTION_MESSAGE;
-            throw new Exception(exception_message);
+            throw new IOException(exception_message);
         }
         for (int charValue = firstChar; charValue <= lastChar; charValue++) {
             if(addCommand) {
