@@ -47,8 +47,8 @@ public class Shell {
     private static final int RESOLUTION_CHANGING_COMMAND_LENGTH = 2;
     private static final int RESOLUTION_CHANGING_FACTOR = 2;
 
-    private SubImgCharMatcher charMatcher;
-    private Image paddedImage;
+    private final SubImgCharMatcher charMatcher;
+    private final Image paddedImage;
     private Image[][] subImages;
     private int resolution;
 
