@@ -102,6 +102,7 @@ public class Shell {
                 }
                 break;
             case RESOLUTION_COMMAND:
+                //TODO fix the resolution doubling problem.
                 try {
                     resolutionCommand(userArguments);
                     System.out.println(String.format(RESOLUTION_COMMAND_OUTPUT_FORMAT, this.resolution));
