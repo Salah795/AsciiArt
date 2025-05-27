@@ -118,7 +118,6 @@ public class Shell {
                     addRemoveCommand(userArguments, false);
                     break;
                 case RESOLUTION_COMMAND:
-                    //TODO fix the resolution doubling problem.
                     resolutionCommand(userArguments);
                     System.out.println(String.format(RESOLUTION_COMMAND_OUTPUT_FORMAT, this.resolution));
                     break;

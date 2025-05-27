@@ -102,11 +102,11 @@ public final class ImageEditor {
 
     private static int updateDimension(int dimension) {
         int counter = 0;
-        while (Math.pow(counter, PADDING_FACTOR) < dimension) {
+        while (Math.pow(PADDING_FACTOR, counter) < dimension) {
             counter++;
         }
-        if (Math.pow(counter, PADDING_FACTOR) > dimension) {
-            dimension = (int) Math.pow(counter, PADDING_FACTOR);
+        if (Math.pow(PADDING_FACTOR, counter) > dimension) {
+            dimension = (int) Math.pow(PADDING_FACTOR, counter);
         }
         return dimension;
     }
