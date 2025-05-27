@@ -33,9 +33,19 @@ public class Shell {
     private static final int ADD_ONE_CHAR_COMMAND_INDEX = 0;
     private static final int IMAGE_NAME_INDEX = 0;
     private static final String ADD_COMMAND_EXCEPTION_MESSAGE = "Did not add due to incorrect format";
+    private static final String RESOLUTION_COMMAND_OUTPUT_FORMAT = "Resolution set to %d";
     private static final String REMOVE_COMMAND_EXCEPTION_MESSAGE = "Did not remove due to incorrect format";
+    private static final String RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE = "Did not change " +
+            "resolution due to exceeding boundaries";
+    private static final String RESOLUTION_INCORRECT_FORMAT_EXCEPTION = "Did not change resolution " +
+            "due to incorrect format";
+    private static final String RESOLUTION_DOUBLING_COMMAND = "up";
+    private static final String RESOLUTION_DOWN_COMMAND = "down";
     private static final char[] DEFAULT_CHARSET = new char[] {'0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9'};
+    private static final int RESOLUTION_COMMAND_TYPE_INDEX = 1;
+    private static final int RESOLUTION_CHANGING_COMMAND_LENGTH = 2;
+    private static final int RESOLUTION_CHANGING_FACTOR = 2;
 
     private SubImgCharMatcher charMatcher;
     private Image paddedImage;
@@ -80,37 +90,51 @@ public class Shell {
             case ADD_COMMAND:
                 try {
                     addRemoveCommand(userArguments, true);
-                } catch (IllegalAddCommandException exception) {
+                } catch (AddRemoveCommandException exception) {
                     System.out.println(exception.getMessage());
                 }
                 break;
             case REMOVE_COMMAND:
                 try {
                     addRemoveCommand(userArguments, false);
-                } catch (IllegalAddCommandException exception) {
+                } catch (AddRemoveCommandException exception) {
                     System.out.println(exception.getMessage());
                 }
                 break;
             case RESOLUTION_COMMAND:
-                //TODO check for min and max resolution.
-                resolutionCommand(userArguments);
-                System.out.println(String.format("Resolution set to %d", this.resolution));
+                try {
+                    resolutionCommand(userArguments);
+                    System.out.println(String.format(RESOLUTION_COMMAND_OUTPUT_FORMAT, this.resolution));
+                } catch (ResolutionCommandException exception) {
+                    System.out.println(exception.getMessage());
+                }
                 break;
         }
     }
 
-    private void resolutionCommand(String[] userArguments) {
-        if(userArguments.length >= 2 && userArguments[1].equals("up")) {
-            this.resolution *= 2;
+    private void resolutionCommand(String[] userArguments) throws ResolutionCommandException {
+        if(userArguments.length >= RESOLUTION_CHANGING_COMMAND_LENGTH &&
+                userArguments[RESOLUTION_COMMAND_TYPE_INDEX].equals(RESOLUTION_DOUBLING_COMMAND)) {
+            if(this.resolution * RESOLUTION_CHANGING_FACTOR > this.paddedImage.getWidth()) {
+                throw new ResolutionCommandException(RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE);
+            }
+            this.resolution *= RESOLUTION_CHANGING_FACTOR;
             this.subImages = ImageEditor.getSubImages(this.paddedImage, this.resolution);
-        } else if (userArguments.length >= 2 && userArguments[1].equals("down")) {
-            this.resolution /= 2;
+        } else if (userArguments.length >= RESOLUTION_CHANGING_COMMAND_LENGTH &&
+                userArguments[RESOLUTION_COMMAND_TYPE_INDEX].equals(RESOLUTION_DOWN_COMMAND)) {
+            double minCharsInRow = Math.max(1, this.paddedImage.getWidth() / this.paddedImage.getHeight());
+            if((double) this.resolution / RESOLUTION_CHANGING_FACTOR < minCharsInRow) {
+                throw new ResolutionCommandException(RESOLUTION_EXCEEDING_BOUNDARIES_EXCEPTION_MESSAGE);
+            }
+            this.resolution /= RESOLUTION_CHANGING_FACTOR;
             this.subImages = ImageEditor.getSubImages(this.paddedImage, this.resolution);
+        } else if (userArguments.length >= RESOLUTION_CHANGING_COMMAND_LENGTH) {
+            throw new ResolutionCommandException(RESOLUTION_INCORRECT_FORMAT_EXCEPTION);
         }
     }
 
     private void addRemoveCommand(String[] userArguments, boolean addCommand) throws
-            IllegalAddCommandException {
+            AddRemoveCommandException {
         if (userArguments.length >= LEGAL_ADD_REMOVE_COMMAND_LENGTH &&
                 userArguments[ADD_REMOVE_COMMAND_TYPE_INDEX].equals(ADD_ALL_COMMAND)) {
             addRemoveAllCommand(addCommand);
@@ -127,17 +151,17 @@ public class Shell {
         } else {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
                     REMOVE_COMMAND_EXCEPTION_MESSAGE;
-            throw new IllegalAddCommandException(exception_message);
+            throw new AddRemoveCommandException(exception_message);
         }
     }
 
     private void addRemoveOneCharCommand(String argument, boolean addCommand) throws
-            IllegalAddCommandException {
+            AddRemoveCommandException {
         char charToAdd = argument.charAt(ADD_ONE_CHAR_COMMAND_INDEX);
         if (charToAdd < MIN_LEGAL_CHAR || charToAdd > MAX_LEGAL_CHAR) {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
                     REMOVE_COMMAND_EXCEPTION_MESSAGE;
-            throw new IllegalAddCommandException(exception_message);
+            throw new AddRemoveCommandException(exception_message);
         } else {
             if(addCommand) {
                 this.charMatcher.addChar(charToAdd);
@@ -148,7 +172,7 @@ public class Shell {
     }
 
     private void addRemoveWithRangeCommand(String argument, boolean addCommand) throws
-            IllegalAddCommandException {
+            AddRemoveCommandException {
         int firstChar = argument.charAt(RANGE_FIRST_CHAR_INDEX);
         int lastChar = argument.charAt(RANGE_LAST_CHAR_INDEX);
         if(argument.charAt(RANGE_FIRST_CHAR_INDEX) > argument.charAt(RANGE_LAST_CHAR_INDEX)) {
@@ -158,7 +182,7 @@ public class Shell {
         if (firstChar < MIN_LEGAL_CHAR || lastChar > MAX_LEGAL_CHAR) {
             String exception_message = addCommand ? ADD_COMMAND_EXCEPTION_MESSAGE :
                     REMOVE_COMMAND_EXCEPTION_MESSAGE;
-            throw new IllegalAddCommandException(exception_message);
+            throw new AddRemoveCommandException(exception_message);
         }
         for (int charValue = firstChar; charValue <= lastChar; charValue++) {
             if(addCommand) {
