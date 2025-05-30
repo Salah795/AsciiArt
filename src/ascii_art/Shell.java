@@ -141,10 +141,10 @@ public class Shell {
 
     private void asciiArtCommand() throws IOException {
         AsciiOutput asciiOutput;
-        if(this.charMatcher.getSortedCharset().size() < 2) {
+        if(this.charMatcher.getSortedChars().size() < 2) {
             throw new IOException(CHARSET_EXCEPTION_MESSAGE);
         }
-        AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(this.charMatcher.getSortedCharset(),
+        AsciiArtAlgorithm asciiArtAlgorithm = new AsciiArtAlgorithm(this.charMatcher.getSortedChars(),
                 this.paddedImage, this.resolution);
         char[][] asciiMatrix = asciiArtAlgorithm.run();
         if(this.outputType.equals(CONSOLE_COMMAND)) {
@@ -283,7 +283,7 @@ public class Shell {
     }
 
     private void charsCommand() {
-        for (char character: this.charMatcher.getSortedCharset()) {
+        for (char character: this.charMatcher.getSortedChars()) {
             System.out.print(String.format(CHARSET_PRINTING_FORMAT, character));
         }
         System.out.println();
