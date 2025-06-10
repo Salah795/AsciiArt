@@ -1,6 +1,3 @@
-salah.taher,kaissora13
-212001432,214472490
-
 1.
 Image: Represents an image in memory using a 2D array of Color objects. It
 provides basic utilities for accessing pixel data and dimensions. It serves
