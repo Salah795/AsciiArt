@@ -2,7 +2,7 @@ package ascii_output;
 
 /**
  * Output a 2D array of chars to the console.
- * @author Dan Nirel
+ * @author Salah Mahmied
  */public class ConsoleAsciiOutput implements AsciiOutput{
     @Override
     public void out(char[][] chars) {

@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 /**
  * Output a 2D array of chars to an HTML file viewable in a web browser.
- * @author Dan Nirel
+ * @author Salah Mahmied
  */
 public class HtmlAsciiOutput implements AsciiOutput {
     private static final double BASE_LINE_SPACING = 0.8;
