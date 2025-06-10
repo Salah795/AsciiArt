@@ -27,7 +27,6 @@ public class Shell {
     private static final String ADD_COMMAND = "add";
     private static final String REMOVE_COMMAND = "remove";
     private static final String RESOLUTION_COMMAND = "res";
-    private static final String ROUND_COMMAND = "round";
     private static final String OUTPUT_COMMAND = "output";
     private static final String ASCII_ART_COMMAND = "asciiArt";
     private static final String HTML_COMMAND = "html";
@@ -145,9 +144,6 @@ public class Shell {
                     resolutionCommand(userArguments);
                     System.out.println(String.format(RESOLUTION_COMMAND_OUTPUT_FORMAT, this.resolution));
                     break;
-                case ROUND_COMMAND:
-                    roundCommand(userArguments);
-                    break;
                 case OUTPUT_COMMAND:
                     outputCommand(userArguments);
                     break;
@@ -204,26 +200,6 @@ public class Shell {
             this.outputType = CONSOLE_COMMAND;
         } else {
             throw new IOException(OUTPUT_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
-        }
-    }
-
-    /**
-     * Handles the rounding method command (currently not implemented).
-     * @param userArguments The command arguments
-     * @throws IOException If the command format is incorrect
-     */
-    private void roundCommand(String[] userArguments) throws IOException {
-        if (userArguments.length >= COMMAND_WITH_TYPES_LENGTH &&
-                userArguments[COMMAND_SUB_TYPE_INDEX].equals(ROUND_UP)) {
-            // TODO: Implement rounding up
-        } else if (userArguments.length >= COMMAND_WITH_TYPES_LENGTH &&
-                userArguments[COMMAND_SUB_TYPE_INDEX].equals(ROUND_DOWN)) {
-            // TODO: Implement rounding down
-        } else if (userArguments.length >= COMMAND_WITH_TYPES_LENGTH &&
-                userArguments[COMMAND_SUB_TYPE_INDEX].equals(ROUND_ABS)) {
-            // TODO: Implement absolute rounding
-        } else {
-            throw new IOException(ROUND_INCORRECT_FORMAT_EXCEPTION_MESSAGE);
         }
     }
 
